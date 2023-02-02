@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
-# Script Manage my process 
-FILE=/var/run/my_process.pid
-if [ "$1" == "start" ]; then
-	./manage_my_process & echo $$ > $FILE
-	echo "manage_my_process started"
-elif [ "$1" == "stop" ]; then
-	pkill -SIGKILL -f  "manage_my_process"
-	rm $FILE
-	echo "manage_my_process stopped"
-elif [ "$1" == "restart" ]; then
-	pkill -SIGKILL -f "manage_my_process"
-	rm $FILE
-	./manage_my_process & echo $$ > $FILE
-	echo "manage_my_process restarted"
-else 
-	echo "Usage: manage_my_process {start|stop|restart}"; fi
+# manager for manage_my_process
+case $1 in
+	"start")
+		./manage_my_process & > /var/run/my_process.pid
+		echo 'manage_my_process started';;
+	"restart")
+		id=$(cat /var/run/my_process.pid)
+		kill -s SIGSTOP "$id"
+		rm /var/run/my_process.pid
+		./manage_my_process & > /var/run/my_process.pid
+		echo 'manage_my_process restarted';;
+	"stop")
+		id=$(cat /var/run/my_process.pid)
+		kill -s SIGSTOP "$id"
+		rm /var/run/my_process.pid
+		echo 'manage_my_process stopped';;
+	*)
+		echo 'Usage: manage_my_process {start|stop|restart}';;
+esac
