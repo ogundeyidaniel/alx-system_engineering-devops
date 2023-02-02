@@ -1,1 +1,1 @@
-0x06-Regular-Processor
+0x06. Regular expression
